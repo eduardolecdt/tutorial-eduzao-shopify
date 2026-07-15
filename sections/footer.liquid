@@ -34,6 +34,17 @@
   - Ícones de redes vêm do snippet 'icon'.
 {%- endcomment -%}
 <footer class="footer" data-section-id="{{ section.id }}">
+  {%- if section.settings.show_brand_wordmark -%}
+    <div class="footer__wordmark-wrap page-width">
+      <a href="{{ routes.root_url }}" class="footer__wordmark" aria-label="{{ shop.name | escape }}">
+        {{ section.settings.brand_wordmark | default: shop.name | escape }}
+      </a>
+      {%- if section.settings.brand_tagline != blank -%}
+        <p class="footer__tagline">{{ section.settings.brand_tagline | escape }}</p>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
   <div class="footer__top page-width">
     {%- for block in section.blocks -%}
       {%- case block.type -%}
@@ -137,46 +148,107 @@
 
 <style>
   .footer {
-    background-color: var(--color-background-contrast);
-    color: var(--color-text-contrast);
+    background-color: var(--color-accent);
+    color: var(--color-accent-text);
     margin-top: var(--spacing-sections);
+    border-radius: 32px 32px 0 0;
+    overflow: hidden;
   }
+
+  /* Wordmark grande (assinatura da marca) */
+  .footer__wordmark-wrap {
+    text-align: center;
+    padding-top: 56px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid rgba(245, 239, 230, 0.16);
+  }
+  .footer__wordmark {
+    display: inline-block;
+    font-family: var(--font-heading-family);
+    font-size: clamp(2.4rem, 8vw, 6rem);
+    line-height: 1;
+    letter-spacing: 0.01em;
+    color: var(--color-accent-text);
+    text-decoration: none;
+  }
+  .footer__tagline {
+    margin-top: 14px;
+    font-size: var(--f2);
+    letter-spacing: 0.04em;
+    opacity: 0.75;
+  }
+
   .footer__top {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 40px;
-    padding-top: 48px;
-    padding-bottom: 48px;
+    grid-template-columns: 1.4fr repeat(auto-fit, minmax(160px, 1fr));
+    gap: 48px;
+    padding-top: 52px;
+    padding-bottom: 52px;
   }
-  .footer__logo { display: block; height: auto; margin-bottom: 16px; }
-  .footer__brand-name { font-family: var(--font-heading-family); font-size: var(--f4); margin-bottom: 12px; }
-  .footer__heading { font-size: var(--f2); margin-bottom: 16px; }
+  .footer__logo { display: block; height: auto; margin-bottom: 16px; filter: brightness(0) invert(1); }
+  .footer__brand-name { font-family: var(--font-heading-family); font-size: var(--f5); margin-bottom: 14px; }
+  .footer__heading {
+    font-family: var(--font-body-family);
+    font-size: var(--f1);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-bottom: 18px;
+  }
   .footer__menu { list-style: none; margin: 0; padding: 0; }
-  .footer__link { display: inline-block; padding: 6px 0; color: inherit; text-decoration: none; font-size: var(--f1); }
-  .footer__link:hover { text-decoration: underline; }
-  .footer__text { font-size: var(--f1); line-height: 1.6; }
+  .footer__link {
+    display: inline-block;
+    padding: 7px 0;
+    color: inherit;
+    text-decoration: none;
+    font-size: var(--f2);
+    opacity: 0.85;
+    transition: opacity 0.15s ease, padding-left 0.15s ease;
+  }
+  .footer__link:hover { opacity: 1; padding-left: 4px; }
+  .footer__text { font-size: var(--f2); line-height: 1.7; opacity: 0.85; max-width: 34ch; }
+  .footer__block--brand .footer__text { margin-top: 4px; }
+
   .footer__bottom {
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 16px;
-    padding-top: 24px;
-    padding-bottom: 24px;
-    border-top: 1px solid var(--color-border);
+    padding-top: 26px;
+    padding-bottom: 30px;
+    border-top: 1px solid rgba(245, 239, 230, 0.16);
   }
   .footer__bottom-left,
-  .footer__bottom-right { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .footer__bottom-right { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
   .footer__payment { display: flex; gap: 6px; list-style: none; margin: 0; padding: 0; flex-wrap: wrap; }
-  .footer__payment-icon { width: 38px; height: 24px; }
-  .footer__social { display: flex; gap: 12px; list-style: none; margin: 0; padding: 0; }
-  .footer__social a { color: inherit; display: inline-flex; }
-  .footer__copyright { font-size: var(--f0); }
-  .footer__credit a { color: inherit; text-decoration: underline; }
-  .footer__credit a:hover { color: var(--color-accent); }
+  .footer__payment-icon { width: 38px; height: 24px; border-radius: 4px; overflow: hidden; }
+  .footer__social { display: flex; gap: 8px; list-style: none; margin: 0; padding: 0; }
+  .footer__social a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: inherit;
+    border: 1px solid rgba(245, 239, 230, 0.28);
+    border-radius: 50%;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+  .footer__social a:hover { background-color: var(--color-accent-text); color: var(--color-accent); }
+  .footer__social svg { width: 18px; height: 18px; }
+  .footer__copyright { font-size: var(--f1); opacity: 0.7; }
+  .footer__credit a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+  .footer__credit a:hover { opacity: 1; }
 
   @media screen and (max-width: 1000px) {
+    .footer { border-radius: 24px 24px 0 0; }
+    .footer__top { grid-template-columns: 1fr 1fr; gap: 32px; }
+    .footer__block--brand { grid-column: 1 / -1; }
     .footer__bottom { flex-direction: column; align-items: flex-start; }
+  }
+  @media screen and (max-width: 600px) {
+    .footer__top { grid-template-columns: 1fr; }
   }
 </style>
 
@@ -219,6 +291,11 @@
     }
   ],
   "settings": [
+    { "type": "header", "content": "Assinatura da marca" },
+    { "type": "checkbox", "id": "show_brand_wordmark", "default": true, "label": "Mostrar nome grande da marca" },
+    { "type": "text", "id": "brand_wordmark", "label": "Nome exibido", "info": "Deixe vazio para usar o nome da loja" },
+    { "type": "text", "id": "brand_tagline", "default": "Sneakers autênticos para o seu dia a dia", "label": "Slogan" },
+    { "type": "header", "content": "Rodapé inferior" },
     { "type": "checkbox", "id": "show_social", "default": true, "label": "t:sections.footer.settings.show_social.label" },
     { "type": "checkbox", "id": "show_payment_icons", "default": true, "label": "t:sections.footer.settings.show_payment_icons.label" },
     { "type": "checkbox", "id": "enable_localization", "default": true, "label": "t:sections.footer.settings.enable_localization.label" }
